@@ -43,7 +43,7 @@ class MovieAdapter : PagingDataAdapter<Movie, MovieAdapter.MyViewHolder>(DiffUti
         }
 
         override fun areContentsTheSame(oldItem: Movie, newItem: Movie): Boolean {
-            return oldItem.name == newItem.name && oldItem.species == newItem.species
+            return oldItem == newItem
         }
     }
 }
