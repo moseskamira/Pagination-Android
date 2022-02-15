@@ -1,6 +1,6 @@
 # Pagination-Android
 
-- This project is intended to demo Paging in Android.
+- This project is intended to Demo Paging/ Pagination in Android with Kotlin
 
 ### Screenshot showing a List of Characters
 

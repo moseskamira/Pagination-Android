@@ -17,7 +17,7 @@ class MovieViewModel : ViewModel() {
 
     fun returnMovies(): Flow<PagingData<Movie>> {
         return Pager(
-            config = PagingConfig(pageSize = 2, maxSize = 200),
+            config = PagingConfig(pageSize = 42, initialLoadSize = 84, maxSize = 126),
             pagingSourceFactory = { MoviePagingSource(serviceApi) }).flow.cachedIn(viewModelScope)
     }
 }
