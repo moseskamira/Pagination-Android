@@ -7,24 +7,21 @@ import com.example.paginationandroid.model.Movie
 import com.example.paginationandroid.network.RetrofitServiceAPI
 
 class MoviePagingSource(
-    val retrofitServiceAPI: RetrofitServiceAPI
+    private val retrofitServiceAPI: RetrofitServiceAPI
 ) : PagingSource<Int, Movie>() {
-
     override fun getRefreshKey(state: PagingState<Int, Movie>): Int? {
-       return state.anchorPosition
+        return state.anchorPosition
     }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Movie> {
         try {
             val nextPage = params.key ?: FIRST_PAGE_INDEX
             val response = retrofitServiceAPI.getDataFromApi(nextPage)
-
             var nextPageNumber: Int? = null
             if (response.info.next != null) {
                 val uri = Uri.parse(response.info.next)!!
                 val nextPageQuery = uri.getQueryParameter("page")
                 nextPageNumber = Integer.parseInt(nextPageQuery!!)
-
             }
             return LoadResult.Page(
                 data = response.results,
@@ -36,9 +33,7 @@ class MoviePagingSource(
         }
     }
 
-    companion object{
+    companion object {
         private const val FIRST_PAGE_INDEX = 1
     }
-
-
 }
