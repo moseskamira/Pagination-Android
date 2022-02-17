@@ -14,20 +14,25 @@ class MoviePagingSource(
     }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Movie> {
+        val currentPage = params.key ?: FIRST_PAGE_INDEX
         try {
-            val nextPage = params.key ?: FIRST_PAGE_INDEX
-            val response = retrofitServiceAPI.getDataFromApi(nextPage)
-            var nextPageNumber: Int? = null
-            if (response.info.next != null) {
-                val uri = Uri.parse(response.info.next)!!
-                val nextPageQuery = uri.getQueryParameter("page")
-                nextPageNumber = Integer.parseInt(nextPageQuery!!)
-            }
+            val response = retrofitServiceAPI.getDataFromApi(currentPage)
+            val  moviesList = response.results
             return LoadResult.Page(
-                data = response.results,
-                prevKey = if (nextPage == 1) null else nextPage - 1,
-                nextKey = nextPageNumber
+                data = moviesList,
+                prevKey = if (currentPage == FIRST_PAGE_INDEX) null else currentPage - 1,
+                nextKey = if (moviesList.isEmpty()) null else currentPage +1
             )
+
+//            var nextPageNumber: Int? = null
+//            if (response.info.next != null) {
+//                val uri = Uri.parse(response.info.next)!!
+//                val nextPageQuery = uri.getQueryParameter("page")
+//                nextPageNumber = Integer.parseInt(nextPageQuery!!)
+//            }
+
+
+
         } catch (e: Exception) {
             return LoadResult.Error(e)
         }
