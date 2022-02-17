@@ -9,8 +9,6 @@ import java.util.concurrent.TimeUnit
 
 class RetrofitInstance {
     private val baseUrl = "https://rickandmortyapi.com/api/"
-
-
     private var interceptor = HttpLoggingInterceptor()
     private val httpClient = OkHttpClient.Builder()
         .connectTimeout(30, TimeUnit.SECONDS)
@@ -29,6 +27,5 @@ class RetrofitInstance {
 
     fun getRetrofitServiceApi(): RetrofitServiceAPI {
         return getRetrofitInstance().create(RetrofitServiceAPI::class.java)
-
     }
 }
