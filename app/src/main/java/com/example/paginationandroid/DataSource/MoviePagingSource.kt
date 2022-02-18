@@ -1,40 +1,39 @@
 package com.example.paginationandroid.DataSource
 
-import android.net.Uri
+import android.view.View
+import android.widget.ProgressBar
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.example.paginationandroid.model.Movie
 import com.example.paginationandroid.network.RetrofitServiceAPI
+import com.google.android.material.textfield.TextInputLayout
 
 class MoviePagingSource(
-    private val retrofitServiceAPI: RetrofitServiceAPI
+    private val retrofitServiceAPI: RetrofitServiceAPI,
+    private val errorDisplay: TextInputLayout,
+    private val progressBar: ProgressBar
 ) : PagingSource<Int, Movie>() {
     override fun getRefreshKey(state: PagingState<Int, Movie>): Int? {
         return state.anchorPosition
     }
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Movie> {
+        progressBar.visibility = View.VISIBLE
         val currentPage = params.key ?: FIRST_PAGE_INDEX
-        try {
+        return try {
             val response = retrofitServiceAPI.getDataFromApi(currentPage)
-            val  moviesList = response.results
-            return LoadResult.Page(
+            progressBar.visibility = View.GONE
+            val moviesList = response.body()!!.results
+            LoadResult.Page(
                 data = moviesList,
                 prevKey = if (currentPage == FIRST_PAGE_INDEX) null else currentPage - 1,
-                nextKey = if (moviesList.isEmpty()) null else currentPage +1
+                nextKey = if (moviesList.isEmpty()) null else currentPage + 1
             )
 
-//            var nextPageNumber: Int? = null
-//            if (response.info.next != null) {
-//                val uri = Uri.parse(response.info.next)!!
-//                val nextPageQuery = uri.getQueryParameter("page")
-//                nextPageNumber = Integer.parseInt(nextPageQuery!!)
-//            }
-
-
-
         } catch (e: Exception) {
-            return LoadResult.Error(e)
+            progressBar.visibility = View.GONE
+            errorDisplay.error = e.message
+            LoadResult.Error(e)
         }
     }
 
